@@ -24,7 +24,7 @@ MEDITATION_FOLDER = os.path.join(UPLOAD_FOLDER, "meditations")
 for folder in [UPLOAD_FOLDER, AFFIRMATIONS_FOLDER, WORKBOOKS_FOLDER, MEDITATION_FOLDER]:
     os.makedirs(folder, exist_ok=True)
 
-# Home-Modul
+# Home-Seite
 if menu == "Home":
     st.subheader("✨ Allgemeine Datei-Uploads")
 
@@ -37,6 +37,7 @@ if menu == "Home":
 
     st.subheader("📂 Hochgeladene Dateien:")
 
+    # Nur echte Dateien, keine versteckten Dateien (z. B. .DS_Store)
     files = [
         file for file in os.listdir(UPLOAD_FOLDER)
         if os.path.isfile(os.path.join(UPLOAD_FOLDER, file)) and not file.startswith('.')
@@ -48,6 +49,8 @@ if menu == "Home":
                 st.download_button(label=f"⬇️ {file}", data=f, file_name=file)
     else:
         st.write("🕊️ Noch keine Dateien vorhanden.")
+
+
 
 # Affirmationen-Modul
 elif menu == "Affirmationen":
@@ -64,6 +67,7 @@ elif menu == "Affirmationen":
 
     allowed_extensions = (".png", ".jpg", ".jpeg")
     files = []
+
     for entry in os.scandir(AFFIRMATIONS_FOLDER):
         if entry.is_file() and entry.name.lower().endswith(allowed_extensions) and not entry.name.startswith('.'):
             files.append(entry.name)
@@ -102,7 +106,6 @@ elif menu == "Affirmationen":
     if st.button("Nächste Affirmation"):
         st.session_state.index = (st.session_state.index + 1) % len(affirmationen)
 
-# Workbooks-Modul
 elif menu == "Workbooks":
     st.subheader("📖 Workbooks & PDF Upload")
 
@@ -128,7 +131,6 @@ elif menu == "Workbooks":
     else:
         st.write("🕊️ Noch keine Workbooks hochgeladen.")
 
-# Meditationen-Modul
 elif menu == "Meditationen":
     st.subheader("🎧 Meditationen & Audio Upload")
 
@@ -154,7 +156,6 @@ elif menu == "Meditationen":
     else:
         st.write("🕊️ Noch keine Meditationen hochgeladen.")
 
-# Modulübersicht
 elif menu == "Modulübersicht":
     st.subheader("🗂️ Samarah Creator Studio – Modulübersicht")
 
@@ -184,7 +185,6 @@ elif menu == "Modulübersicht":
     st.markdown("---")
     st.write("Klicke im Menü links, um zu den Modulen zu wechseln.")
 
-# KI-Module
 elif menu == "KI-Module":
     st.subheader("🤖 KI Affirmations-Generator")
 
@@ -194,7 +194,6 @@ elif menu == "KI-Module":
         if prompt.strip() == "":
             st.warning("Bitte gib ein Thema oder Stichwort ein.")
         else:
-            # Simulierter KI-Output (hier später echte KI-Integration)
             affirmations = [
                 f"Ich bin voller Kraft und {prompt}.",
                 f"Mein Herz öffnet sich für {prompt} und Liebe.",
@@ -206,7 +205,6 @@ elif menu == "KI-Module":
             for aff in affirmations:
                 st.write(f"- {aff}")
 
-            # Download der Affirmationen als Textdatei
             affirm_text = "\n".join(affirmations)
             st.download_button(
                 label="Affirmationen als Text herunterladen",
@@ -215,6 +213,5 @@ elif menu == "KI-Module":
                 mime="text/plain"
             )
 
-# Footer
 st.markdown("---")
 st.markdown("<p style='text-align:center; color:#C0A98E;'>© 2025 Samarah Creator Studio ✨</p>", unsafe_allow_html=True)
