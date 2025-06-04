@@ -1,6 +1,7 @@
-# Design V1.0 Update Test
-# import streamlit as st
+import streamlit as st
 import os
+
+# Design V1.0 Update Test
 
 # Farb- und Stildefinition
 st.set_page_config(page_title="Samarah Creator Studio", page_icon="🌸", layout="centered")
