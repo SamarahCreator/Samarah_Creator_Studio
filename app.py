@@ -15,16 +15,14 @@ st.markdown("""
 # Navigation
 menu = st.sidebar.radio("📂 Module auswählen", ("Home", "Affirmationen", "Workbooks", "Meditationen", "Modulübersicht", "KI-Module"))
 
-
-
-
-
-# === ALLE Upload-Ordner definieren ===
+# Ordner erstellen
 UPLOAD_FOLDER = "uploads"
-AFFIRMATIONS_FOLDER = "uploads/affirmations"
+AFFIRMATIONS_FOLDER = os.path.join(UPLOAD_FOLDER, "affirmations")
+WORKBOOKS_FOLDER = os.path.join(UPLOAD_FOLDER, "workbooks")
+MEDITATION_FOLDER = os.path.join(UPLOAD_FOLDER, "meditations")
 
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-os.makedirs(AFFIRMATIONS_FOLDER, exist_ok=True)
+for folder in [UPLOAD_FOLDER, AFFIRMATIONS_FOLDER, WORKBOOKS_FOLDER, MEDITATION_FOLDER]:
+    os.makedirs(folder, exist_ok=True)
 
 # Home-Modul
 if menu == "Home":
@@ -39,13 +37,10 @@ if menu == "Home":
 
     st.subheader("📂 Hochgeladene Dateien:")
 
-    # Nur echte Dateien anzeigen, keine versteckten wie .DS_Store
     files = [
         file for file in os.listdir(UPLOAD_FOLDER)
-        if os.path.isfile(os.path.join(UPLOAD_FOLDER, file))
-        and not file.startswith('.')
+        if os.path.isfile(os.path.join(UPLOAD_FOLDER, file)) and not file.startswith('.')
     ]
-
     if files:
         for file in files:
             file_path = os.path.join(UPLOAD_FOLDER, file)
@@ -69,7 +64,6 @@ elif menu == "Affirmationen":
 
     allowed_extensions = (".png", ".jpg", ".jpeg")
     files = []
-
     for entry in os.scandir(AFFIRMATIONS_FOLDER):
         if entry.is_file() and entry.name.lower().endswith(allowed_extensions) and not entry.name.startswith('.'):
             files.append(entry.name)
@@ -82,17 +76,37 @@ elif menu == "Affirmationen":
                 st.download_button(label=f"⬇️ {file}", data=f, file_name=file)
     else:
         st.write("🕊️ Noch keine Affirmationen hochgeladen.")
-        
+
+    st.markdown("---")
+
+    st.subheader("✨ Zyklische Affirmationen")
+
+    affirmationen = [
+        "Ich bin Licht und Liebe.",
+        "Meine Seele ist frei.",
+        "Ich vertraue meinem Weg.",
+        "Jeder Atemzug stärkt mich.",
+        "Heilung erfüllt mich jetzt.",
+        "Liebe fließt durch mich.",
+        "Mein Herz strahlt Freude.",
+        "Intuition führt mich.",
+        "Ich lasse los und wachse.",
+        "Ich bin verbunden und sicher."
+    ]
+
+    if 'index' not in st.session_state:
+        st.session_state.index = 0
+
+    st.write(f"🌿 {affirmationen[st.session_state.index]}")
+
+    if st.button("Nächste Affirmation"):
+        st.session_state.index = (st.session_state.index + 1) % len(affirmationen)
+
 # Workbooks-Modul
 elif menu == "Workbooks":
-
     st.subheader("📖 Workbooks & PDF Upload")
 
-    WORKBOOKS_FOLDER = "uploads/workbooks"
-    os.makedirs(WORKBOOKS_FOLDER, exist_ok=True)
-
     workbook_file = st.file_uploader("Lade Dein Workbook als PDF hoch:", type=["pdf"])
-
     if workbook_file is not None:
         file_path = os.path.join(WORKBOOKS_FOLDER, workbook_file.name)
         with open(file_path, "wb") as f:
@@ -103,11 +117,8 @@ elif menu == "Workbooks":
 
     files = [
         file for file in os.listdir(WORKBOOKS_FOLDER)
-        if os.path.isfile(os.path.join(WORKBOOKS_FOLDER, file))
-        and file.lower().endswith(".pdf")
-        and not file.startswith('.')
+        if os.path.isfile(os.path.join(WORKBOOKS_FOLDER, file)) and file.lower().endswith(".pdf") and not file.startswith('.')
     ]
-
     if files:
         for file in files:
             file_path = os.path.join(WORKBOOKS_FOLDER, file)
@@ -116,16 +127,12 @@ elif menu == "Workbooks":
                 st.download_button(label=f"⬇️ {file}", data=f, file_name=file)
     else:
         st.write("🕊️ Noch keine Workbooks hochgeladen.")
+
 # Meditationen-Modul
 elif menu == "Meditationen":
-
     st.subheader("🎧 Meditationen & Audio Upload")
 
-    MEDITATION_FOLDER = "uploads/meditations"
-    os.makedirs(MEDITATION_FOLDER, exist_ok=True)
-
     meditation_file = st.file_uploader("Lade Deine Meditation hoch:", type=["mp3", "wav"])
-
     if meditation_file is not None:
         file_path = os.path.join(MEDITATION_FOLDER, meditation_file.name)
         with open(file_path, "wb") as f:
@@ -136,11 +143,8 @@ elif menu == "Meditationen":
 
     files = [
         file for file in os.listdir(MEDITATION_FOLDER)
-        if os.path.isfile(os.path.join(MEDITATION_FOLDER, file))
-        and file.lower().endswith((".mp3", ".wav"))
-        and not file.startswith('.')
+        if os.path.isfile(os.path.join(MEDITATION_FOLDER, file)) and file.lower().endswith((".mp3", ".wav")) and not file.startswith('.')
     ]
-
     if files:
         for file in files:
             file_path = os.path.join(MEDITATION_FOLDER, file)
@@ -150,8 +154,8 @@ elif menu == "Meditationen":
     else:
         st.write("🕊️ Noch keine Meditationen hochgeladen.")
 
+# Modulübersicht
 elif menu == "Modulübersicht":
-
     st.subheader("🗂️ Samarah Creator Studio – Modulübersicht")
 
     st.markdown("""
@@ -180,8 +184,8 @@ elif menu == "Modulübersicht":
     st.markdown("---")
     st.write("Klicke im Menü links, um zu den Modulen zu wechseln.")
 
+# KI-Module
 elif menu == "KI-Module":
-
     st.subheader("🤖 KI Affirmations-Generator")
 
     prompt = st.text_area("Gib ein Thema oder Stichwort ein, zu dem Du Affirmationen möchtest:")
